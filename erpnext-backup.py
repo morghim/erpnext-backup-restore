@@ -36,7 +36,7 @@ executing = 'Executing: '
 mysql_pass = ''
 mysql_dump = 'mysqldump -u root -p'
 tar_cmd = 'tar cvzf'
-bench_dir = 'frappe/frappe-bench'
+bench_dir = 'myfrappe-bench'
 sites = '/sites'
 
 # This function opens up the json located on directory above the script.
@@ -173,7 +173,7 @@ def run_server_backups(backup_servers, time):
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())# no known_hosts error
             # ssh.load_system_host_keys()
             # Connect
-            ssh.connect(hostname, username=user, passphrase=mySSHK_passphrase) #no password needed           ssh.connect(hostname, username=user, passphrase=password, password=password) # When using password only use this
+            ssh.connect(hostname, username=user, passphrase=password, password=password) #no password needed           ssh.connect(hostname, username=user, passphrase=password, password=password) # When using password only use this
             prog_status = 'Successfully connected to %s' % hostname
             print(str(prog_status))
 
