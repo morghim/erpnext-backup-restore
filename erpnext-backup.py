@@ -131,7 +131,7 @@ def files_backup_cmd(remote_backup_dir, hostname, time, filename, tar_args, site
     It also creates the command and returns it ready to be executed"""
     
     # Concatenate the command string for backing up the site folder
-    remote_site_dl_file_path = str(remote_backup_dir) + fwd + str(hostname).replace(".", "_")) + dash + time.strftime('%Y-%m-%d-%H-%M') + dash + str(filename) + dot + tar + dot + gz
+    remote_site_dl_file_path = str(remote_backup_dir) + fwd + str(hostname).replace(".", "_") + dash + time.strftime('%Y-%m-%d-%H-%M') + dash + str(filename) + dot + tar + dot + gz
     # print(str(remote_pvt_dl_file_path))
     site_file_backup_cmd = tar + spc + tar_args + spc + str(remote_site_dl_file_path) + spc + str(remote_backup_dir) + fwd + bench_dir + sites + fwd + str(sitename)
     # print(str(site_file_backup_cmd))
