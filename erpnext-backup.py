@@ -16,7 +16,7 @@ from scp import scp_remote_to_local, scp_local_to_remote
 
 server_json = 'backup-restore.json'
 filename = getframeinfo(currentframe()).filename
-onedirup = Path(filename).resolve().parent.parent
+onedirup = Path(filename).resolve().parent
 
 nl = '\n'
 fwd = '/'
@@ -288,23 +288,23 @@ def run_all():
     3. Sets up"""
     print(header1 + spc + title + spc + header1)
     # RUN Everything
-    try:
-        begin_time = datetime.datetime.now()    
-        backup_servers = get_backup_servers()
-        # Will read how many servers must be backed up
-        if len(backup_servers) == 1:
-            print(header1 + spc + str(len(backup_servers)) + spc + one_stb + spc + header1)
-        else:
-            print(header1 + spc + str(len(backup_servers)) + spc + many_stb + spc + header1)
-        print(str(run_server_backups(backup_servers, begin_time)))
+    # try:
+    begin_time = datetime.datetime.now()    
+    backup_servers = get_backup_servers()
+    # Will read how many servers must be backed up
+    if len(backup_servers) == 1:
+        print(header1 + spc + str(len(backup_servers)) + spc + one_stb + spc + header1)
+    else:
+        print(header1 + spc + str(len(backup_servers)) + spc + many_stb + spc + header1)
+    print(str(run_server_backups(backup_servers, begin_time)))
         #run server_restores
-    except:
-        end_time = datetime.datetime.now()
-        print('The process took: ' + str((end_time - begin_time)))
-        print('Something failed, could not execute remote server database backup. Check individual functions, json file  for answers.')
-    finally:
-        end_time = datetime.datetime.now()
-        print('The process took: ' + str((end_time - begin_time)))
-        print('ERPNext Backup Process Completed')
+    # except:
+    #     end_time = datetime.datetime.now()
+    #     print('The process took: ' + str((end_time - begin_time)))
+    #     print('Something failed, could not execute remote server database backup. Check individual functions, json file  for answers.')
+    # finally:
+    #     end_time = datetime.datetime.now()
+    #     print('The process took: ' + str((end_time - begin_time)))
+    #     print('ERPNext Backup Process Completed')
 
 run_all()
