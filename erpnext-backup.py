@@ -181,20 +181,20 @@ def run_server_backups(backup_servers, time):
         # Access the content of a remote file containing JSON data.
         # We obtain the password for the database file
         # try:
-            prog_status = 'Getting data from passwords.txt...'
-            print(str(prog_status))
-            sftp_client = ssh.open_sftp()
-            remote_file = sftp_client.open(commands_dict['passwords_file'])
-            json_data = json.load(remote_file)
-            # print(str(json_data))
-            mysql_pass = json_data['mysql_root_password']
-            # print(mysql_pass)
-            remote_file.close()
-            prog_status = 'Database password successfully obtained...' #+ str(mysql_pass)
-            print(str(prog_status))
-        # except:
-            prog_status = "Error obtaining database user and password"
-            remote_file.close()
+        prog_status = 'Getting data from passwords.txt...'
+        print(str(prog_status))
+        sftp_client = ssh.open_sftp()
+        remote_file = sftp_client.open(commands_dict['passwords_file'])
+        json_data = json.load(remote_file)
+        # print(str(json_data))
+        mysql_pass = json_data['mysql_root_password']
+        # print(mysql_pass)
+        remote_file.close()
+        prog_status = 'Database password successfully obtained...' #+ str(mysql_pass)
+        print(str(prog_status))
+    # except:
+        prog_status = "Error obtaining database user and password"
+        remote_file.close()
         
         # Create the backup command to be executed for backing up the remote db.
         cmd1 = sql_db_backup_cmd(backup_servers[index]['backup_dir'],backup_servers[index]['hostname'], time, backup_servers[index]['sql_backup_filename'], mysql_pass, commands_dict['db_name'])
