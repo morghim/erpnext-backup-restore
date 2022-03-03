@@ -55,7 +55,7 @@ def get_backup_servers():
     # gets the entire json
     json = read_json()
     print(json)
-    backup_servers = json['ERPNext_servers_to_backup'] 
+    backup_servers = json['ERPNext-servers_to_backup'] 
     # print(backup_servers)   
     return backup_servers
 
