@@ -54,7 +54,7 @@ def get_backup_servers():
     """This function gets the array of servers to be backed up"""
     # gets the entire json
     json = read_json()
-    # print(json)
+    print(json)
     backup_servers = json['ERPNext_servers_to_backup'] 
     # print(backup_servers)   
     return backup_servers
