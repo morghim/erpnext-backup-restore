@@ -162,6 +162,7 @@ def run_server_backups(backup_servers, time):
         # hostname = backup_servers[index]['hostname']
         hostname = p['hostname']
         user = p['user']
+        password = p['password']
         mySSHK_passphrase = p['mySSHK_passphrase']
         print(backup_servers[index]['hostname'])
         print('***** Server #' + str(server_count) + ' *****')
