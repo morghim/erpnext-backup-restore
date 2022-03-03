@@ -153,107 +153,107 @@ def run_server_backups(backup_servers, time):
     """
     server_count = 1
     prog_status = ''
-    try:
-        prog_status = 'Iterating through servers...'
-        for p in backup_servers:
-            # enumerating the index of backup_servers
-            index, item = next(enumerate(backup_servers))
-            # Testing enumeration, since i cannot use "p"
-            # hostname = backup_servers[index]['hostname']
-            hostname = p['hostname']
-            user = p['user']
-            mySSHK_passphrase = p['mySSHK_passphrase']
-            print(backup_servers[index]['hostname'])
-            print('***** Server #' + str(server_count) + ' *****')
-            print('Hostname: ' + p['hostname'] + nl + 'User: ' + p['user'])
-    
-            # Open the SSH connection
-            ssh = paramiko.SSHClient() # Creates an SSHClient object instance to connect with
-            # Add the locally available SSH Keys to the ssh connection object.
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())# no known_hosts error
-            # ssh.load_system_host_keys()
-            # Connect
-            ssh.connect(hostname, username=user, passphrase=password, password=password) #no password needed           ssh.connect(hostname, username=user, passphrase=password, password=password) # When using password only use this
-            prog_status = 'Successfully connected to %s' % hostname
+# try:
+    prog_status = 'Iterating through servers...'
+    for p in backup_servers:
+        # enumerating the index of backup_servers
+        index, item = next(enumerate(backup_servers))
+        # Testing enumeration, since i cannot use "p"
+        # hostname = backup_servers[index]['hostname']
+        hostname = p['hostname']
+        user = p['user']
+        mySSHK_passphrase = p['mySSHK_passphrase']
+        print(backup_servers[index]['hostname'])
+        print('***** Server #' + str(server_count) + ' *****')
+        print('Hostname: ' + p['hostname'] + nl + 'User: ' + p['user'])
+
+        # Open the SSH connection
+        ssh = paramiko.SSHClient() # Creates an SSHClient object instance to connect with
+        # Add the locally available SSH Keys to the ssh connection object.
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())# no known_hosts error
+        # ssh.load_system_host_keys()
+        # Connect
+        ssh.connect(hostname, username=user, passphrase=password, password=password) #no password needed           ssh.connect(hostname, username=user, passphrase=password, password=password) # When using password only use this
+        prog_status = 'Successfully connected to %s' % hostname
+        print(str(prog_status))
+
+        # Obtain database user and password
+        # Access the content of a remote file containing JSON data.
+        # We obtain the password for the database file
+        # try:
+            prog_status = 'Getting data from passwords.txt...'
             print(str(prog_status))
-
-            # Obtain database user and password
-            # Access the content of a remote file containing JSON data.
-            # We obtain the password for the database file
-            try:
-                prog_status = 'Getting data from passwords.txt...'
-                print(str(prog_status))
-                sftp_client = ssh.open_sftp()
-                remote_file = sftp_client.open(commands_dict['passwords_file'])
-                json_data = json.load(remote_file)
-                # print(str(json_data))
-                mysql_pass = json_data['mysql_root_password']
-                # print(mysql_pass)
-                remote_file.close()
-                prog_status = 'Database password successfully obtained...' #+ str(mysql_pass)
-                print(str(prog_status))
-            except:
-                prog_status = "Error obtaining database user and password"
-                remote_file.close()
-            
-            # Create the backup command to be executed for backing up the remote db.
-            cmd1 = sql_db_backup_cmd(backup_servers[index]['backup_dir'],backup_servers[index]['hostname'], time, backup_servers[index]['sql_backup_filename'], mysql_pass, commands_dict['db_name'])
-            # print(cmd1)
-            
-            
-           
-
-            # We now backup the database
-            prog_status = 'Begin Database back up...'
+            sftp_client = ssh.open_sftp()
+            remote_file = sftp_client.open(commands_dict['passwords_file'])
+            json_data = json.load(remote_file)
+            # print(str(json_data))
+            mysql_pass = json_data['mysql_root_password']
+            # print(mysql_pass)
+            remote_file.close()
+            prog_status = 'Database password successfully obtained...' #+ str(mysql_pass)
             print(str(prog_status))
-            stdin, stdout, stderr = ssh.exec_command(sql_db_backup_cmd)
-            channel = stdout.channel
-            status = channel.recv_exit_status()
-            if status == 0:
-                for line in stdout.read().splitlines():
-                    result = str(line, 'utf-8')
-                prog_status = 'SQL Database successfully backed up.'
-                print(str(prog_status))
-            else:
-                prog_status = 'No Backups made'
-                # print(str(prog_status))
+        # except:
+            prog_status = "Error obtaining database user and password"
+            remote_file.close()
+        
+        # Create the backup command to be executed for backing up the remote db.
+        cmd1 = sql_db_backup_cmd(backup_servers[index]['backup_dir'],backup_servers[index]['hostname'], time, backup_servers[index]['sql_backup_filename'], mysql_pass, commands_dict['db_name'])
+        # print(cmd1)
+        
+        
+        
 
-            # We now backup the site folder
-            prog_status = 'Begin File back up...'
+        # We now backup the database
+        prog_status = 'Begin Database back up...'
+        print(str(prog_status))
+        stdin, stdout, stderr = ssh.exec_command(sql_db_backup_cmd)
+        channel = stdout.channel
+        status = channel.recv_exit_status()
+        if status == 0:
+            for line in stdout.read().splitlines():
+                result = str(line, 'utf-8')
+            prog_status = 'SQL Database successfully backed up.'
             print(str(prog_status))
-            stdin, stdout, stderr = ssh.exec_command(site_file_backup_cmd)
-            channel = stdout.channel
-            status = channel.recv_exit_status()
-            if status == 0:
-                for line in stdout.read().splitlines():
-                    result = str(line, 'utf-8')
-                for line in stderr.read().splitlines():
-                    result = str(line, 'utf-8')
-                prog_status = 'Site folder successfully backed up.'
-                # print(str(prog_status))
-            else:
-                for line in stdout.read().splitlines():
-                    result = str(line, 'utf-8')
-                for line in stderr.read().splitlines():
-                    result = str(line, 'utf-8')
-                prog_status = 'No Sites folder file backups were made'
-                # print(str(prog_status))
-            ssh.close()
-            server_count += 1
+        else:
+            prog_status = 'No Backups made'
+            # print(str(prog_status))
 
-            # We now download the database we just backed up here
-            # WORKS OK
-            # download_files(remote_db_dl_file_path)
-            # WORKS OK
+        # We now backup the site folder
+        prog_status = 'Begin File back up...'
+        print(str(prog_status))
+        stdin, stdout, stderr = ssh.exec_command(site_file_backup_cmd)
+        channel = stdout.channel
+        status = channel.recv_exit_status()
+        if status == 0:
+            for line in stdout.read().splitlines():
+                result = str(line, 'utf-8')
+            for line in stderr.read().splitlines():
+                result = str(line, 'utf-8')
+            prog_status = 'Site folder successfully backed up.'
+            # print(str(prog_status))
+        else:
+            for line in stdout.read().splitlines():
+                result = str(line, 'utf-8')
+            for line in stderr.read().splitlines():
+                result = str(line, 'utf-8')
+            prog_status = 'No Sites folder file backups were made'
+            # print(str(prog_status))
+        ssh.close()
+        server_count += 1
 
-            # And the private + public files
-            # WORKS OK
-            # download_files(remote_site_dl_file_path)
-            # WORKS OK
+        # We now download the database we just backed up here
+        # WORKS OK
+        # download_files(remote_db_dl_file_path)
+        # WORKS OK
 
-            # Check if user wants to restore files, either True or False
-            # print('Contents of: ' + str(server_data['execute_restore']))
-            # if server_data['copy_files_to_remote'] is not False:
+        # And the private + public files
+        # WORKS OK
+        # download_files(remote_site_dl_file_path)
+        # WORKS OK
+
+        # Check if user wants to restore files, either True or False
+        # print('Contents of: ' + str(server_data['execute_restore']))
+        # if server_data['copy_files_to_remote'] is not False:
 #                 print('do copy the files')
 #                 # We upload the database to the server to be restored
 #                 remote_db_ul_file_path = server_data['restore_copy_dir']
@@ -273,8 +273,8 @@ def run_server_backups(backup_servers, time):
 #                     print('no restore requested')
 #             else:
 #                 print('no file copy requested, ignoring restore flag, whichever it may be')
-    except:
-        prog_status = 'Oops!, something in the backup routine failed! check run_server_backups() function or data passed to it!'
+# except:
+    prog_status = 'Oops!, something in the backup routine failed! check run_server_backups() function or data passed to it!'
     return prog_status
 
 def clean_up():
