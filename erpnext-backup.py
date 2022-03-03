@@ -16,7 +16,7 @@ from scp import scp_remote_to_local, scp_local_to_remote
 
 server_json = 'backup-restore.json'
 filename = getframeinfo(currentframe()).filename
-onedirup = Path(filename).resolve()
+onedirup = Path(filename).resolve().parent
 
 nl = '\n'
 fwd = '/'
